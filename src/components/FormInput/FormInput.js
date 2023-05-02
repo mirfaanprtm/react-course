@@ -6,10 +6,10 @@ const FormInput = (props) => {
   let formProps;
   switch (type) {
     case "textarea":
-      formProps = { as: type, value };
+      formProps = { as: type, value};
       break;
     case "file":
-      formProps = { type };
+      formProps = { type};
       break;
     default:
       props = {

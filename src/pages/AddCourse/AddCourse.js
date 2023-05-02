@@ -3,7 +3,11 @@ import FormInput from "../../components/FormInput";
 import { Form, Button, ButtonGroup } from "react-bootstrap";
 import useAddCourse from "./useAddCourse";
 import { StyledContainer, StyledTitle } from "./AddCourse.styled";
-
+import { Navigate, useNavigate } from "react-router-dom";
+import Constants from "../../components/Constants";
+import useMutation from "../../hooks/useMutation";
+import { addCourse } from "../../services/courseService";
+const { ROUTES } = Constants
 
 const FORM_LIST = [
   {
@@ -45,14 +49,51 @@ const FORM_LIST = [
 ];
 
 const AddCourse = () => {
+  const navigate = useNavigate()
   const { getter, setter } = useAddCourse();
+  const {onMutation, loading} = useMutation(addCourse, {
+    onSuccess: () => navigate("/course-list"),
+    onError: () => {}
+  })
+
+  const onSubmit = (event) => {
+    event.preventDefault()
+    onMutation(getter)
+  }
+
+
+  // const handleSubmit = (event, data) => {
+  //   event.preventDefault();
+  //   const newCourse = {
+  //     title: getter.title,
+  //     description: getter.description,
+  //     typeId: getter.typeId,
+  //     courseFile: getter.courseFile,
+  //     level: getter.level,
+  //     duration: getter.duration,
+  //   };
+  //   if (
+  //     !getter.title ||
+  //     !getter.description ||
+  //     !getter.typeId ||
+  //     !getter.courseFile ||
+  //     !getter.level ||
+  //     !getter.duration
+  //   ) {
+  //     alert("Field Is Still Empty");
+  //   } else {
+  //     onMutation(data);
+  //     navigate("/course-list")
+  //   }
+  // };
 
   return (
-    <StyledContainer color={"red"}>
+    <StyledContainer color={"green"}>
       <StyledTitle>Add Course Page</StyledTitle>
       <Form>
-        {FORM_LIST.map(form => (
+        {FORM_LIST.map((form) => (
           <FormInput
+            required
             label={form.label}
             type={form.type}
             placeholder={form.placeholder}
@@ -61,8 +102,9 @@ const AddCourse = () => {
           />
         ))}
         <ButtonGroup>
-            <Button variant="success">Submit</Button>
-            <Button variant="primary">Cancel</Button>
+          <Button disabled={loading} variant="success" formNoValidate onClick={onSubmit} >
+            Submit
+          </Button>
         </ButtonGroup>
       </Form>
     </StyledContainer>
